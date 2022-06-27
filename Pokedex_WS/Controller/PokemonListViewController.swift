@@ -46,7 +46,14 @@ extension PokemonListViewController{
 //MARK: - TableView Delegate
 extension PokemonListViewController{
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(pokemons[indexPath.row].name)
+        performSegue(withIdentifier: K.pokeDetailsSegue, sender: self)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let destinationVC = segue.destination as! PokemonDetailsViewController
+        guard let indexPath = tableView.indexPathForSelectedRow else {return}
+        guard let urlSelected = pokemons[indexPath.row].url else {return}
+        destinationVC.selectedPokemon = urlSelected
     }
 }
 

@@ -15,6 +15,7 @@ struct K {
     }
     
     static let pokeCell = "PokemonCell"
+    static let pokeDetailsSegue = "pokemonDetails"
     
 }
 extension UIColor{
