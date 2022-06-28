@@ -22,7 +22,7 @@ struct PokemonDetailsModel {
         self.element = element
     }
     init(){
-        
+    
     }
     
     

@@ -6,13 +6,14 @@
 //
 
 import UIKit
+import CoreData
 
 
 class Service{
     let base_URL = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
     //Singleton
     static let shared = Service()
-    
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
 //MARK: - Fetch Pokemon List
     
@@ -27,7 +28,9 @@ class Service{
             guard let data = data else {return}
             guard let pokemon = self.parseJSON(data) else{return}
             for pokemon in pokemon.results {
-                let pokemonModel = PokemonListModel(name: pokemon.name, url: pokemon.url)
+                let pokemonModel = PokemonListModel(context: self.context)
+                pokemonModel.name = pokemon.name
+                pokemonModel.url = pokemon.url
                 pokemonArray.append(pokemonModel)
             }
             completion(pokemonArray)
@@ -80,6 +83,8 @@ extension Service{
         }
     }
     
+    
+//MARK: - Getting Image
     private func fetchImage(with url:String, completion: @escaping(UIImage) ->()){
         guard let url = URL(string: url) else {return}
         URLSession.shared.dataTask(with: url) { data, response, error in
@@ -90,5 +95,14 @@ extension Service{
             guard let image = UIImage(data: data) else {return}
             completion(image)
         }.resume()
+    }
+    
+    func save(){
+        
+        do{
+            try context.save()
+        }catch{
+            print(error)
+        }
     }
 }

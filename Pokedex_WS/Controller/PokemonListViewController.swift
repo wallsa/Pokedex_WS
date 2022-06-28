@@ -6,22 +6,32 @@
 //
 
 import UIKit
+import CoreData
 
 class PokemonListViewController: UITableViewController {
     
     var pokemons = [PokemonListModel]()
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViewComponents()
         tableView.register(PokemonCell.self, forCellReuseIdentifier: PokemonCell.identifier)
-        fetchPokemon()
+        //Se há conexão, solicitamos a API, se nao, carregamos o CoreData
+        if Reachability.isConnectedToNetwork(){
+            fetchPokemon()
+        }else{
+            loadList()
+        }
+        
+        
     }
     
 //MARK: - API
     func fetchPokemon(){
         Service.shared.fetchPokemonList { pokemon in
             self.pokemons = pokemon
+            self.save()
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
@@ -57,16 +67,6 @@ extension PokemonListViewController{
     }
 }
 
-
-
-
-
-
-
-
-
-
-
 //MARK: - Configure
 extension PokemonListViewController{
         
@@ -79,8 +79,29 @@ extension PokemonListViewController{
             appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
             navigationItem.standardAppearance = appearance
             navigationItem.scrollEdgeAppearance = appearance
-           
-            
         }
+    
+//MARK: - Core Data
+    
+        func save(){
+            
+            do{
+                try context.save()
+                print("saving")
+            }catch{
+                print(error)
+            }
+        }
+    func loadList(with request:NSFetchRequest<PokemonListModel> = PokemonListModel.fetchRequest()){
+        do{
+            pokemons = try context.fetch(request)
+        }catch{
+            print(error)
+        }
+        tableView.reloadData()
+    }
+    
+    
+        
 }
 
