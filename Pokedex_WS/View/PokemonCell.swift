@@ -38,7 +38,7 @@ class PokemonCell: UITableViewCell {
     func configureComponents(){
         self.clipsToBounds = true
         addSubview(nameContainerView)
-        nameContainerView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 100, width: 0, height: 0)
+        nameContainerView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
     
     }
     

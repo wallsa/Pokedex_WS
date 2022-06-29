@@ -13,6 +13,9 @@ class PokemonListViewController: UITableViewController {
     var pokemons = [PokemonListModel]()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
+    
+//MARK: - LifeCycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViewComponents()
@@ -27,11 +30,16 @@ class PokemonListViewController: UITableViewController {
         
     }
     
+//MARK: - Action
+    
+    @IBAction func favButton(_ sender: UIBarButtonItem) {
+        performSegue(withIdentifier: K.favoriteList, sender: self)
+    }
+    
 //MARK: - API
     func fetchPokemon(){
         Service.shared.fetchPokemonList { pokemon in
             self.pokemons = pokemon
-            self.save()
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
@@ -60,10 +68,13 @@ extension PokemonListViewController{
         tableView.deselectRow(at: indexPath, animated: true)
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let destinationVC = segue.destination as! PokemonDetailsViewController
-        guard let indexPath = tableView.indexPathForSelectedRow else {return}
-        guard let urlSelected = pokemons[indexPath.row].url else {return}
-        destinationVC.selectedPokemon = urlSelected
+        if segue.identifier == K.pokeDetailsSegue{
+            let destinationVC = segue.destination as! PokemonDetailsViewController
+            guard let indexPath = tableView.indexPathForSelectedRow else {return}
+            guard let urlSelected = pokemons[indexPath.row].url else {return}
+            destinationVC.selectedPokemon = urlSelected
+        }
+       
     }
 }
 
@@ -87,7 +98,7 @@ extension PokemonListViewController{
             
             do{
                 try context.save()
-                print("saving")
+                print("saving list")
             }catch{
                 print(error)
             }
@@ -100,7 +111,6 @@ extension PokemonListViewController{
         }
         tableView.reloadData()
     }
-    
     
         
 }

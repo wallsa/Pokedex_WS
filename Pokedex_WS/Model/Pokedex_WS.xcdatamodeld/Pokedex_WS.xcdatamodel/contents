@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21E258" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="PokemonDetailsModel" representedClassName=".PokemonDetailsModel" syncable="YES" codeGenerationType="class">
+        <attribute name="element" optional="YES" attributeType="String"/>
+        <attribute name="favorite" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="imgURL" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="pokeImageString" optional="YES" attributeType="String"/>
+    </entity>
     <entity name="PokemonListModel" representedClassName=".PokemonListModel" syncable="YES" codeGenerationType="class">
+        <attribute name="fav" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="url" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="PokemonListModel" positionX="-63" positionY="-18" width="128" height="59"/>
+        <element name="PokemonDetailsModel" positionX="-36" positionY="36" width="128" height="119"/>
+        <element name="PokemonListModel" positionX="-63" positionY="-18" width="128" height="74"/>
     </elements>
 </model>

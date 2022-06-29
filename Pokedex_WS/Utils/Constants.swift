@@ -16,6 +16,9 @@ struct K {
     
     static let pokeCell = "PokemonCell"
     static let pokeDetailsSegue = "pokemonDetails"
+    static let favoriteList = "favoriteList"
+    static let nibName = "FavoriteCell"
+    static let favCellIdentifier = "favoriteCellIdentifier"
     
 }
 extension UIColor{

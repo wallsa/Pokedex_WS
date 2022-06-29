@@ -31,6 +31,7 @@ class Service{
                 let pokemonModel = PokemonListModel(context: self.context)
                 pokemonModel.name = pokemon.name
                 pokemonModel.url = pokemon.url
+                pokemonModel.fav = false
                 pokemonArray.append(pokemonModel)
             }
             completion(pokemonArray)
@@ -53,7 +54,6 @@ class Service{
 extension Service{
     
     func fetchPokemonDetails(urlString:String, completion: @escaping (PokemonDetailsModel) -> ()){
-        var pokemon = PokemonDetailsModel(name: "", id: 0, imgURL: "", element: "")
         guard let url = URL(string: urlString) else {return}
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
@@ -61,11 +61,10 @@ extension Service{
             }
             guard let data = data else {return}
             guard let pokemonDetails = self.parseJSONDetails(data) else {return}
-            pokemon = pokemonDetails
-            guard let url = pokemon.imgURL else {return}
+            guard let url = pokemonDetails.imgURL else {return}
             self.fetchImage(with: url) { image in
-                pokemon.pokeImg = image
-                completion(pokemon)
+                pokemonDetails.pokeImageString = image
+                completion(pokemonDetails)
             }
         
         }
@@ -75,7 +74,13 @@ extension Service{
         let decoder = JSONDecoder()
         do{
             let decoderData = try decoder.decode(PokemonDetailsData.self, from: pokemonDetails)
-            let pokemonDetails = PokemonDetailsModel(name: decoderData.name, id: decoderData.id, imgURL: decoderData.sprites.front_default, element: decoderData.types[0].type.name)
+            let idString = String(format: "%d", decoderData.id)
+            let pokemonDetails = PokemonDetailsModel(context: self.context)
+            pokemonDetails.name = decoderData.name
+            pokemonDetails.id = idString
+            pokemonDetails.favorite = false
+            pokemonDetails.imgURL = decoderData.sprites.front_default
+            pokemonDetails.element = decoderData.types[0].type.name
             return pokemonDetails
         }catch{
             print(error)
@@ -85,24 +90,19 @@ extension Service{
     
     
 //MARK: - Getting Image
-    private func fetchImage(with url:String, completion: @escaping(UIImage) ->()){
+    private func fetchImage(with url:String, completion: @escaping(String) ->()){
         guard let url = URL(string: url) else {return}
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
                 print("Failed to fetch pokemon Image\(error)")
             }
             guard let data = data else {return}
-            guard let image = UIImage(data: data) else {return}
-            completion(image)
+            let imgString = data.base64EncodedString()
+            completion(imgString)
         }.resume()
     }
     
-    func save(){
-        
-        do{
-            try context.save()
-        }catch{
-            print(error)
-        }
-    }
+    
+    
+    
 }
