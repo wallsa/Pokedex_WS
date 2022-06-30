@@ -10,9 +10,9 @@ import CoreData
 
 class PokemonDetailsViewController: UIViewController {
     
-
+    
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-
+    
     
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var idLabel: UILabel!
@@ -54,28 +54,17 @@ class PokemonDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViewComponents()
-        
     }
     
     
     @IBAction func favoritePressed(_ sender: UIButton) {
-        
-        save()
-        
-        
-        
-        
+        favoriteButton.isEnabled.toggle()
+        guard let pokemonId = pokemon.id else {return}
+        testForDuplicates(id: pokemonId)
         
     }
     
 }
-
-
-
-
-
-
-
 
 //MARK: - Configure
 
@@ -95,53 +84,26 @@ extension PokemonDetailsViewController{
         let imageFilled = UIImage(systemName: "star.fill")
         favoriteButton.setImage(image, for: .normal)
         favoriteButton.setImage(imageFilled, for: .selected)
-        
     }
     
-//MARK: - Core Data
-    
-    func save(){
-       
+    //MARK: - Core Data
+    func testForDuplicates(id:String){
+        let request:NSFetchRequest<PokemonDetailsModel> = PokemonDetailsModel.fetchRequest()
+        request.predicate = NSPredicate(format: "id CONTAINS[cd] %@", id)
         do{
-            try context.save()
-            print("saving fav pokemon")
-        }catch{
-            print(error)
+            let fetchResult = try context.fetch(request)
+            if fetchResult.count - 1 > 0 {
+                context.delete(pokemon)
+                print("deleting")
+                
+            }else{
+                try context.save()
+                print("saving")
+            }
+            
+        }catch {
+            print(error.localizedDescription)
         }
     }
-//    func loadList(with request:NSFetchRequest<PokemonListModel> = PokemonListModel.fetchRequest()){
-//        do{
-//            pokemons = try context.fetch(request)
-//        }catch{
-//            print(error)
-//        }
-//        tableView.reloadData()
-//    }
-
-//    func testForDuplicates(id:String){
-//        let request:NSFetchRequest<PokemonDetailsModel> = PokemonDetailsModel.fetchRequest()
-//        request.predicate = NSPredicate(format: "id CONTAINS[cd] %@", id)
-//        do{
-//            let fetchResult = try context.fetch(request)
-//            if fetchResult.count > 0{
-//                for doubleData in fetchResult{
-//                    context.delete(doubleData)
-//                }
-//            } else {
-//
-//
-//            }
-//        } catch {
-//            print(error.localizedDescription)
-//        }
-//    }
-//    func isEntityAttributeExist(id: NSManagedObjectID, entityName: String) -> Bool {
-//        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-//        let managedContext = appDelegate.persistentContainer.viewContext
-//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-//        fetchRequest.predicate = NSPredicate(format: "id == %@", id)
-//        let res = try! managedContext.fetch(fetchRequest)
-//        return res.count > 0 ? true : false
-//    }
-    
 }
+

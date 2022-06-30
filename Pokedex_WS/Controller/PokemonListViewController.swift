@@ -40,6 +40,7 @@ class PokemonListViewController: UITableViewController {
     func fetchPokemon(){
         Service.shared.fetchPokemonList { pokemon in
             self.pokemons = pokemon
+            self.saveList()
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
@@ -74,7 +75,6 @@ extension PokemonListViewController{
             guard let urlSelected = pokemons[indexPath.row].url else {return}
             destinationVC.selectedPokemon = urlSelected
         }
-       
     }
 }
 
@@ -94,7 +94,7 @@ extension PokemonListViewController{
     
 //MARK: - Core Data
     
-        func save(){
+        func saveList(){
             
             do{
                 try context.save()
